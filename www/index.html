@@ -37,14 +37,18 @@
                 var articles = data.slice(0, 10);
                 var div = $('#test-swipe-1');
                 div.empty();
-                var ul = $('<ul></ul>');
+                var row = $('<div class="row"></div>');
                 $.each(articles, function(i, article) {
-                    var li = $('<li></li>');
+                    var col = $('<div class="col s12"></div>');
+                    var card = $('<div class="card"></div>');
+                    var cardContent = $('<div class="card-content"></div>');
                     var link = $('<a></a>').attr('href', article.url).text('Read More').addClass('right');
-                    li.text(article.title).append(link);
-                    ul.append(li);
+                    cardContent.text(article.title).append(link);
+                    card.append(cardContent);
+                    col.append(card);
+                    row.append(col);
                 });
-                div.append(ul);
+                div.append(row);
             },
             error: function(error) {
                 console.error('Error:', error);
