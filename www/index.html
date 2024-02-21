@@ -4,16 +4,16 @@
   <meta name="msapplication-tap-highlight" content="no">
   <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
   <meta name="color-scheme" content="light ">
-  <title>Starter Template - Materialize</title>
+  <title>Arnau Mestre</title>
 
   <!-- CSS  -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
   <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
-</head>
+</head> 
 <body>
   <nav class="light-blue lighten-1" role="navigation">
-    <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">Logo</a></div>
+    <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">Noticias</a></div>
   </nav>
   <ul id="tabs-swipe-demo" class="tabs">
     <li class="tab col s3"><a href="#test-swipe-1">Test 1</a></li>
@@ -21,40 +21,57 @@
     <li class="tab col s3"><a href="#test-swipe-3">Test 3</a></li>
   </ul>
   <div id="test-swipe-1" class="col s12 white">Test 1</div>
-  <div id="test-swipe-2" class="col s12 red">Test 2</div>
-  <div id="test-swipe-3" class="col s12 green">Test 3</div>
+  <div id="test-swipe-2" class="col s12 white">Articulo</div>
+  <div id="test-swipe-3" class="col s12 white">Test 3</div>
   
   <script src="cordova.js"></script>
   <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="js/materialize.js"></script>
   <script src="js/init.js"></script>
   <script>
-    $(document).ready(function() {
-        $.ajax({
-            url: 'https://api.spaceflightnewsapi.net/v3/articles',
-            type: 'GET',
-            success: function(data) {
-                var articles = data.slice(0, 10);
-                var div = $('#test-swipe-1');
-                div.empty();
-                var row = $('<div class="row"></div>');
-                $.each(articles, function(i, article) {
-                    var col = $('<div class="col s12"></div>');
-                    var card = $('<div class="card"></div>');
-                    var cardContent = $('<div class="card-content"></div>');
-                    var link = $('<a></a>').attr('href', article.url).text('Read More').addClass('right');
-                    cardContent.text(article.title).append(link);
-                    card.append(cardContent);
-                    col.append(card);
-                    row.append(col);
+$(document).ready(function() {
+    // Initialize tabs
+    var el = document.querySelector('.tabs');
+    var instance = M.Tabs.init(el, {"swipeable":true});
+
+    // Select the "test-swipe-2" tab
+    instance.select('test-swipe-2');
+
+    console.log('Document is ready'); // This will log when the document is ready
+    $.ajax({
+        url: 'https://api.spaceflightnewsapi.net/v3/articles',
+        type: 'GET',
+        success: function(data) {
+            console.log('Data received', data); // This will log the data received from the API
+            var articles = data.slice(0, 10);
+            var div = $('#test-swipe-1');
+            div.empty();
+            var row = $('<div class="row"></div>');
+            $.each(articles, function(i, article) {
+                var col = $('<div class="col s12"></div>');
+                var card = $('<div class="card"></div>');
+                var cardContent = $('<div class="card-content"></div>');
+                var link = $('<a></a>').text('Read More').addClass('right');
+                link.on('click', function(e) {
+                    e.preventDefault();
+                    $('#test-swipe-2').html('<h2>' + article.title + '</h2><p>' + article.summary + '</p><p>Published at: ' + article.publishedAt + '</p><img src="' + article.imageUrl + '" style="width: 50%; height: auto;">'); // Display the article title, summary, publication date, and image in the "Test 2" tab
+                    instance.select('test-swipe-2'); // Switch to the "Test 2" tab
                 });
-                div.append(row);
-            },
-            error: function(error) {
-                console.error('Error:', error);
-            }
-        });
+                cardContent.text(article.title).append(link); // Append the link to the card content
+                card.append(cardContent);
+                col.append(card);
+                row.append(col);
+            });
+            div.append(row);
+
+            // Force an update of the tabs
+            instance.updateTabIndicator();
+        },
+        error: function(error) {
+            console.error('Error:', error);
+        }
     });
-  </script>
+});
+</script>
 </body>
 </html>
